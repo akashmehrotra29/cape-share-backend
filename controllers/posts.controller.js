@@ -1,8 +1,7 @@
 const Post = require("../models/post.model");
 
 const createNewPostNotification = async (post, req) => {
-  // const {userId} = req.decodedToken.data
-  const userId = 123;
+  const { userId } = req.user;
   try {
     const notification = {
       notificationType: "NEW POST",
@@ -22,8 +21,7 @@ const createNewPostNotification = async (post, req) => {
 };
 
 const createPost = async (req, res) => {
-  // const {userId} = req.decodedToken.data
-  const userId = 123;
+  const { userId } = req.user;
   try {
     const post = {
       user: userId,
