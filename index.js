@@ -10,13 +10,13 @@ app.use(cors())
 
 initializeDBConnection();
 
+app.get("/", (req, res) => {
+  res.send("Welcome to capeshare");
+});
+
 const postsRouter = require('./routes/posts.route')
 
 app.use("/posts", postsRouter);
-
-app.get('/', (req, res) => {
-  res.send('Welcome to capeshare')
-});
 
 app.listen(3000, () => {
   console.log('server started');

@@ -1,4 +1,4 @@
-const Post = require("../models/post.model")
+const Post = require("../models/post.model");
 
 const createNewPostNotification = async (post, req) => {
   // const {userId} = req.decodedToken.data
@@ -8,15 +8,18 @@ const createNewPostNotification = async (post, req) => {
       notificationType: "NEW POST",
       post: post._id,
       time: new Date(),
-      sourceUser: userId
-    }
-    const followers = await userLink.find({follows: userId});
-    const notifications = followers.map((follower)=>({...notification, targetUser: follower.user}))
+      sourceUser: userId,
+    };
+    const followers = await userLink.find({ follows: userId });
+    const notifications = followers.map((follower) => ({
+      ...notification,
+      targetUser: follower.user,
+    }));
     Notification.insertMany(notifications);
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const createPost = async (req, res) => {
   // const {userId} = req.decodedToken.data
@@ -25,8 +28,8 @@ const createPost = async (req, res) => {
     const post = {
       user: userId,
       content: req.body.content,
-      time: req.body.time
-    }
+      time: req.body.time,
+    };
     if (req.body.media) {
       post.media = req.body.media;
     }
@@ -35,11 +38,11 @@ const createPost = async (req, res) => {
 
     createNewPostNotification(post, req);
 
-    res.status(201).json({ success: true, post })
+    res.status(201).json({ success: true, post });
   } catch (error) {
     console.log(error);
-    res.status(404).json({success: false})
+    res.status(404).json({ success: false });
   }
-}
+};
 
-module.exports = {createPost}
+module.exports = { createPost };
