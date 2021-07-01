@@ -16,12 +16,14 @@ app.get("/", (req, res) => {
   res.send("Welcome to capeshare");
 });
 
-const authRouter = require("./routes/auth.routes");
+const authRouter = require("./routes/auth.route");
 const postsRouter = require("./routes/posts.route");
+const userRouter = require("./routes/user.route");
 
 app.use("/", authRouter);
 app.use("/posts", authVerification, postsRouter);
+app.use("/user", authVerification, userRouter);
 
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log("server started");
 });

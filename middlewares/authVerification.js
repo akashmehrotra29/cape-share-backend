@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user.model");
 
 const authVerification = async (req, res, next) => {
   try {
@@ -21,7 +22,7 @@ const authVerification = async (req, res, next) => {
       });
     }
 
-    req.user = { userId: decodedValue.userId };
+    req.user = { userId: decodedToken.userId };
     next();
   } catch (error) {
     res.status(401).json({
