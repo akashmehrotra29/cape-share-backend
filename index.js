@@ -22,7 +22,7 @@ const userRouter = require("./routes/user.route");
 
 app.use("/", authRouter);
 app.use("/posts", authVerification, postsRouter);
-app.use("/user", authVerification, userRouter);
+app.use("/users", authVerification, userRouter);
 
 app.listen(3001, () => {
   console.log("server started");
