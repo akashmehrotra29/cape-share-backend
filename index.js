@@ -18,10 +18,12 @@ app.get("/", (req, res) => {
 const authRouter = require("./routes/auth.route");
 const postsRouter = require("./routes/posts.route");
 const userRouter = require("./routes/user.route");
+const userLinksRouter = require("./routes/userLinks.route");
 
 app.use("/", authRouter);
 app.use("/posts", authVerification, postsRouter);
 app.use("/users", authVerification, userRouter);
+app.use("/user-links", authVerification, userLinksRouter);
 
 app.listen(3001, () => {
   console.log("server started");
