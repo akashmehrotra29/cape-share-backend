@@ -1,4 +1,6 @@
 const Post = require("../models/post.model");
+const UserLink = require("../models/userLink.model");
+const Notification = require("../models/notification.model");
 
 const createNewPostNotification = async (post, req) => {
   const { userId } = req.user;
@@ -9,7 +11,7 @@ const createNewPostNotification = async (post, req) => {
       time: new Date(),
       sourceUser: userId,
     };
-    const followers = await userLink.find({ follows: userId });
+    const followers = await UserLink.find({ follows: userId });
     const notifications = followers.map((follower) => ({
       ...notification,
       targetUser: follower.user,
@@ -23,7 +25,7 @@ const createNewPostNotification = async (post, req) => {
 const createPost = async (req, res) => {
   const { userId } = req.user;
   try {
-    const post = {
+    let post = {
       user: userId,
       content: req.body.content,
       time: req.body.time,
@@ -43,4 +45,35 @@ const createPost = async (req, res) => {
   }
 };
 
-module.exports = { createPost };
+const userPosts = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const posts = await Post.find({ user: userId })
+      .sort({ time: "desc" })
+      .populate({
+        path: "likes",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate("user");
+
+    res.status(200).json({
+      success: true,
+      posts,
+      message: "Successfully found all user posts by user Id",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      success: false,
+      message: "Failed to find user posts by user Id",
+    });
+  }
+};
+
+module.exports = { createPost, userPosts };
