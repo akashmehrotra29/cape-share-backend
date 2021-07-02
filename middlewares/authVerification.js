@@ -22,7 +22,7 @@ const authVerification = async (req, res, next) => {
       });
     }
 
-    req.user = { userId: decodedToken.userId };
+    req.user = decodedToken;
     next();
   } catch (error) {
     res.status(401).json({

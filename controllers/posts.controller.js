@@ -76,4 +76,194 @@ const userPosts = async (req, res) => {
   }
 };
 
-module.exports = { createPost, userPosts };
+const createLikeNotification = async (post, userId) => {
+  try {
+    const notification = {
+      notificationType: "LIKE",
+      post: post._id,
+      time: new Date(),
+      targetUser: post.user,
+      sourceUser: userId,
+    };
+    Notification.create(notification);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const likePost = async (req, res) => {
+  console.log({ req });
+  try {
+    const { userId } = req.user;
+    const { postId } = req.params;
+    let post = await Post.findById(postId);
+    post.likes.push(userId);
+    post = await post.save();
+
+    post = await post
+      .populate({
+        path: "likes",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate("user")
+      .execPopulate();
+
+    createLikeNotification(post, userId);
+
+    res.status(201).json({
+      success: true,
+      post,
+      message: "Successfully added like to post",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to add like to post" });
+  }
+};
+
+const unlikePost = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { postId } = req.params;
+    let post = await Post.findById(postId);
+    post.likes.pull(userId);
+    await post.save();
+
+    post = await post
+      .populate({
+        path: "likes",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate("user")
+      .execPopulate();
+
+    res.status(200).json({
+      success: true,
+      post,
+      message: "Successfully removed like from post",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to remove like from post" });
+  }
+};
+
+const createCommentNotification = async (post, userId) => {
+  try {
+    const notification = {
+      notificationType: "COMMENT",
+      post: post._id,
+      time: new Date(),
+      targetUser: post.user,
+      sourceUser: userId,
+    };
+    Notification.create(notification);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const commentPost = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { postId } = req.params;
+    const comment = {
+      user: userId,
+      content: req.body.content,
+      time: req.body.time,
+    };
+    let post = await Post.findById(postId);
+    post.comments.push(comment);
+    await post.save();
+
+    post = await post
+      .populate({
+        path: "likes",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate("user")
+      .execPopulate();
+
+    if (post.user._id !== userId) {
+      createCommentNotification(post, userId);
+    }
+
+    res.status(201).json({
+      success: true,
+      post,
+      message: "Successfully created comment on post",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to create comment on post" });
+  }
+};
+
+const uncommentPost = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { postId } = req.params;
+    const { commentId } = req.params;
+    let post = await Post.findById(postId);
+    post.comments.pull({ _id: commentId });
+    await post.save();
+
+    post = await post
+      .populate({
+        path: "likes",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate({
+        path: "comments.user",
+        select: "name username photo bio",
+        model: "User",
+      })
+      .populate("user")
+      .execPopulate();
+
+    res.status(200).json({
+      success: true,
+      post,
+      message: "Successfully removed comment from post",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to remove comment from code" });
+  }
+};
+
+module.exports = {
+  createPost,
+  userPosts,
+  likePost,
+  unlikePost,
+  commentPost,
+  uncommentPost,
+};

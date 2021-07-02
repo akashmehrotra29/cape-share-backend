@@ -4,7 +4,6 @@ const cors = require("cors");
 
 const initializeDBConnection = require("./config/db.connect");
 const authVerification = require("./middlewares/authVerification");
-const verifyPostId = require("./middlewares/verifyPostId");
 
 const app = express();
 app.use(bodyParser.json());
