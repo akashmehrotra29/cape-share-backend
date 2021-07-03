@@ -92,7 +92,6 @@ const createLikeNotification = async (post, userId) => {
 };
 
 const likePost = async (req, res) => {
-  console.log({ req });
   try {
     const { userId } = req.user;
     const { postId } = req.params;
@@ -183,6 +182,7 @@ const commentPost = async (req, res) => {
   try {
     const { userId } = req.user;
     const { postId } = req.params;
+    console.log("from comment post");
     const comment = {
       user: userId,
       content: req.body.content,

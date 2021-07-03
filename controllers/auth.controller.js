@@ -33,7 +33,7 @@ const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(pass, salt);
     const newUser = await User.create(user);
-    console.log(newUser);
+    // console.log(newUser);
 
     res.status(201).json({ success: true, message: "signup successful" });
   } catch (error) {
@@ -41,7 +41,6 @@ const signup = async (req, res) => {
     res.status(404).json({ success: false, message: "signup failed" });
   }
 };
-
 
 const login = async (req, res) => {
   const { email, password } = req.body;
