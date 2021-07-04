@@ -19,11 +19,13 @@ const authRouter = require("./routes/auth.route");
 const postsRouter = require("./routes/posts.route");
 const userRouter = require("./routes/user.route");
 const userLinksRouter = require("./routes/userLinks.route");
+const feedRouter = require("./routes/feed.route");
 
 app.use("/", authRouter);
 app.use("/posts", authVerification, postsRouter);
 app.use("/users", authVerification, userRouter);
 app.use("/user-links", authVerification, userLinksRouter);
+app.use("/feed", authVerification, feedRouter);
 
 app.listen(3001, () => {
   console.log("server started");

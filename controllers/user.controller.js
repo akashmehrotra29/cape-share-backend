@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 const UserLink = require("../models/userLink.model");
-const mongoose = require("mongoose");
+const Notification = require("../models/notification.model");
 
 const getUser = async (req, res) => {
   try {
@@ -70,6 +70,7 @@ const getFollowSuggestions = async (req, res) => {
       .limit(3)
       .skip(startIndex)
       .select("name photo username");
+
     res.status(200).json({
       success: true,
       users,
