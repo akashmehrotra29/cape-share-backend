@@ -5,9 +5,10 @@ const {
   getUser,
   getUserByIdWithFollowing,
   getFollowSuggestions,
+  updateUserProfile,
 } = require("../controllers/user.controller");
 
-router.route("/").get(getUser);
+router.route("/").get(getUser).post(updateUserProfile);
 
 router.route("/follow-suggestions").get(getFollowSuggestions);
 

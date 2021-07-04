@@ -1,6 +1,5 @@
 const User = require("../models/user.model");
 const UserLink = require("../models/userLink.model");
-const Notification = require("../models/notification.model");
 
 const getUser = async (req, res) => {
   try {
@@ -85,4 +84,35 @@ const getFollowSuggestions = async (req, res) => {
   }
 };
 
-module.exports = { getUser, getUserByIdWithFollowing, getFollowSuggestions };
+const updateUserProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
+    const updatedUser = req.body;
+
+    Object.keys(updatedUser).forEach((key) => {
+      if (key in user) {
+        user[key] = updatedUser[key];
+      }
+    });
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      user: req.body,
+      message: "Successfully updated user profile",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to update user profile" });
+  }
+};
+
+module.exports = {
+  getUser,
+  getUserByIdWithFollowing,
+  getFollowSuggestions,
+  updateUserProfile,
+};
