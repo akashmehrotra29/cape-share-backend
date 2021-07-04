@@ -82,23 +82,31 @@ const getUsersByTypeOfConnection = async (req, res) => {
 };
 
 const removeUserConnection = async (req, res) => {
-    try {
-        const linkId = req.params.linkId;
-        const following = await UserLink.findByIdAndDelete(linkId);
+  try {
+    const linkId = req.params.linkId;
+    const following = await UserLink.findByIdAndDelete(linkId);
 
-        const sourceUser = await User.findById(following.user);
-        const targetUser = await User.findById(following.follows);
-        sourceUser.followingCount = sourceUser.followingCount - 1;
-        targetUser.followerCount = targetUser.followerCount - 1;
-        await sourceUser.save();
-        await targetUser.save();
-        
-        res.status(201).json({ success: true, deleted: following._id, message: "Successfully unfollowed user" });
-    } catch (error) {
-        console.log(error);
-        res.status(404).json({ success: false, message: "Failed to unfollow user" })
-    }
-}
+    const sourceUser = await User.findById(following.user);
+    const targetUser = await User.findById(following.follows);
+    sourceUser.followingCount = sourceUser.followingCount - 1;
+    targetUser.followerCount = targetUser.followerCount - 1;
+    await sourceUser.save();
+    await targetUser.save();
+
+    res
+      .status(201)
+      .json({
+        success: true,
+        deleted: following._id,
+        message: "Successfully unfollowed user",
+      });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Failed to unfollow user" });
+  }
+};
 
 module.exports = {
   createUserConnection,
